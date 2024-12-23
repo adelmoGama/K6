@@ -2,13 +2,17 @@ import http from 'k6/http';
 import { check, group } from 'k6';
 
 const BASE_URL = 'https://test-api.k6.io/public/crocodiles/';
-const CROCODILE_ID = '2';
+const CROCODILE_ID = Math.floor(Math.random() * 8) + 1;;
 
 export const options = {
-    vus: 10,
-    duration: '10s',
+    stages: [
+        { duration: '10s', target: 3 },
+        { duration: '40s', target: 10 },
+        { duration: '10s', target: 0 },
+      ],
     thresholds: {
-        http_req_failed: ['rate<0.05'],
+        http_req_duration: ['p(95)<500'],
+        http_req_failed: ['rate<0.02'],
     }
 };
 
